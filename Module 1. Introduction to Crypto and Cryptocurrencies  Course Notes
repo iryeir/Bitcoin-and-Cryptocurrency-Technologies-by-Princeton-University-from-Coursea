@@ -1,0 +1,284 @@
+1. Purpose of Module 1
+
+Module 1 establishes the technical foundations required to understand Bitcoin.
+It deliberately avoids economic incentives, mining, and consensus politics. Instead, it answers a more basic question:
+
+What minimal cryptographic and data-structural tools are needed to build a digital currency system?
+
+The module proceeds bottom-up:
+
+First. cryptographic primitives
+
+Then. data structures
+
+Then. ownership and authorization
+
+Finally. a minimal cryptocurrency design
+
+Bitcoin itself is not yet fully introduced. That is intentional.
+
+2. Cryptographic Hash Functions
+2.1 Definition
+
+A cryptographic hash function maps an input of arbitrary length to a fixed-length output.
+
+In Bitcoin, the output length is typically 256 bits.
+
+2.2 Required Properties
+
+A hash function used in cryptocurrencies must satisfy:
+
+Pre-image resistance (one-wayness)
+Given a hash value h, it is computationally infeasible to find any input x such that
+hash(x) = h.
+
+Second pre-image resistance
+Given an input x₁, it is infeasible to find a different input x₂ ≠ x₁ such that
+hash(x₁) = hash(x₂).
+
+Collision resistance
+It is infeasible to find any two distinct inputs x₁, x₂ such that
+hash(x₁) = hash(x₂).
+
+Puzzle friendliness (unpredictability)
+The output behaves like random data.
+Small changes in input completely change the output.
+
+2.3 Role in Cryptocurrencies
+
+Hash functions are not used for secrecy.
+They are used for:
+
+Commitment to data
+
+Tamper detection
+
+Linking data structures
+
+Creating computational puzzles
+
+Hashing enables public verifiability without trust.
+
+3. Hash Pointers and Data Structures
+3.1 Hash Pointers
+
+A hash pointer is:
+
+A pointer to some data
+
+Plus the cryptographic hash of that data
+
+This allows anyone holding the pointer to:
+
+Retrieve the data
+
+Verify that it has not been altered
+
+3.2 Tamper-Evident Structures
+
+By chaining hash pointers together, we obtain a structure where:
+
+Any modification to past data changes all subsequent hashes
+
+Tampering becomes immediately detectable
+
+This principle underlies:
+
+Blockchains
+
+Merkle trees
+
+3.3 Key Insight
+
+Immutability in Bitcoin is not a property of the network.
+It is a property of the data structure combined with cryptography.
+
+4. Digital Signatures
+4.1 Purpose
+
+Digital signatures provide:
+
+Authentication. Who created the message
+
+Authorization. Permission to perform an action
+
+Non-repudiation. The signer cannot later deny it
+
+4.2 Public-Key Cryptography
+
+Each user has:
+
+A private key (kept secret)
+
+A public key (shared with the world)
+
+A valid signature proves possession of the private key without revealing it.
+
+4.3 In Cryptocurrencies
+
+Digital signatures are used to:
+
+Authorize spending of coins
+
+Prove ownership of transaction outputs
+
+There is no account password and no identity verification.
+Control is purely cryptographic.
+
+5. Public Keys as Identities
+5.1 Identity Model
+
+In Bitcoin-like systems:
+
+A public key (or its hash) is an identity
+
+No registration authority exists
+
+Anyone can generate unlimited identities
+
+This is known as decentralized identity management.
+
+5.2 Anonymity vs Pseudonymity
+
+Although identities are not tied to real-world names:
+
+All transactions are public
+
+Behavior patterns can be analyzed
+
+Therefore, Bitcoin provides:
+
+Pseudonymity, not full anonymity
+
+This distinction becomes crucial in later modules.
+
+6. A Simple Cryptocurrency Design
+6.1 Motivation
+
+Before introducing Bitcoin, the course constructs a minimal cryptocurrency to clarify design challenges.
+
+The goal is to answer:
+
+What does it mean to “own” digital money?
+
+How can ownership be transferred?
+
+What prevents double spending?
+
+6.2 Coins and Ownership
+
+A coin is represented as:
+
+A chain of signatures
+
+Each transfer signs over ownership to a new public key
+
+Ownership is proven by:
+
+Presenting the chain of valid signatures
+
+6.3 Transactions
+
+A transaction:
+
+References previous outputs
+
+Specifies new outputs
+
+Is signed by the owner of the inputs
+
+This ensures that only the legitimate owner can spend a coin.
+
+7. The Double-Spending Problem
+7.1 The Core Problem
+
+Digital data can be copied.
+Without a central authority, a user could attempt to spend the same coin twice.
+
+7.2 Why Cryptography Alone Is Insufficient
+
+Even with signatures and hash pointers:
+
+Two conflicting transactions can both appear valid
+
+There is no inherent ordering of events
+
+Thus:
+
+Preventing double spending requires a shared notion of transaction history.
+
+This motivates the need for a ledger.
+
+8. ScroogeCoin: A Centralized Ledger
+8.1 Design
+
+ScroogeCoin introduces a central authority called Scrooge.
+
+Scrooge:
+
+Collects transactions
+
+Orders them into blocks
+
+Publishes a signed ledger
+
+8.2 What Scrooge Solves
+
+Scrooge:
+
+Prevents double spending
+
+Establishes transaction ordering
+
+Maintains a global ledger
+
+8.3 What Scrooge Fails to Solve
+
+Scrooge is:
+
+A single point of trust
+
+A single point of failure
+
+Fully centralized
+
+This system is technically functional, but not decentralized.
+
+9. Why ScroogeCoin Matters
+
+ScroogeCoin is not a joke example.
+It is a deliberate baseline.
+
+Bitcoin can be understood as:
+
+ScroogeCoin with the central authority removed and replaced by cryptographic consensus.
+
+Module 1 ensures students fully understand:
+
+What must be preserved
+
+What must be replaced
+
+What new problems emerge
+
+before Bitcoin is introduced.
+
+10. Conceptual Takeaway of Module 1
+
+Module 1 establishes that:
+
+Cryptography enables ownership without identity
+
+Hash pointers enable tamper-evident history
+
+Digital signatures enable authorization
+
+None of these alone produce decentralization
+
+The remaining challenge, addressed in Module 2, is:
+
+How can a decentralized system agree on a single transaction history without trusting anyone?
+
+11. One-Sentence Summary
+
+Module 1 shows that Bitcoin is not mysterious. It is the unavoidable result of combining cryptographic primitives with the requirement to eliminate trusted intermediaries.
