@@ -1,0 +1,61 @@
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * MaxFeeTxHandler: extra credit.
+ * Tries to choose a mutually valid set of transactions maximizing total fees.
+ *
+ * Approach used here:
+ *  - Greedy by current fee among currently-valid transactions,
+ *  - Recompute validity/fees after each acceptance (because UTXOPool changes),
+ *  - Iterate until no more tx can be accepted.
+ *
+ * This is not guaranteed to be globally optimal, but is a strong baseline.
+ */
+public class MaxFeeTxHandler extends TxHandler {
+
+    public MaxFeeTxHandler(UTXOPool utxoPool) {
+        super(utxoPool);
+    }
+
+    @Override
+    public Transaction[] handleTxs(Transaction[] possibleTxs) {
+        if (possibleTxs == null) return new Transaction[0];
+
+        List<Transaction> remaining = new ArrayList<>();
+        for (Transaction tx : possibleTxs) {
+            if (tx != null) remaining.add(tx);
+        }
+
+        List<Transaction> accepted = new ArrayList<>();
+
+        while (true) {
+            Transaction bestTx = null;
+            double bestFee = Double.NEGATIVE_INFINITY;
+
+            // Find the currently-valid tx with the highest fee
+            for (Transaction tx : remaining) {
+                if (!isValidTx(tx)) continue;
+
+                double f = fee(tx);
+                if (f > bestFee) {
+                    bestFee = f;
+                    bestTx = tx;
+                }
+            }
+
+            // No more valid txs
+            if (bestTx == null) break;
+
+            // Accept best tx, update pool, remove it from remaining
+            accepted.add(bestTx);
+            applyTx(bestTx);
+            remaining.remove(bestTx);
+
+            // Then continue: new UTXOs may unlock new txs,
+            // and removing spent UTXOs may invalidate others.
+        }
+
+        return accepted.toArray(new Transaction[0]);
+    }
+}
